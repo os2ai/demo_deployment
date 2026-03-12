@@ -23,68 +23,18 @@ os2adgang-pilot:
       postLogoutRedirectUris: https://demo.os2ai.dk/*
       webOrigins:
         - +
-      protocol: openid-connect
-      roles:
-        - Builder
-        - Base
-      baseGroup:
-        clientRoles:
-          - Base
-      groups:
-        - name: admins
-          description: Users with administrator permissions in OS2ai
-          attributes:
-            usertype:
-              - admin
-        - name: users
-          description: Users with normal user access to OS2ai
-          attributes:
-            usertype:
-              - user
-      # Naming: protocolMappers is obscure. Really means we add fields to OIDC tokens
-      protocolMappers:
-        - type: oidc-usermodel-client-role-mapper
-          attribute: client_roles # Not used for this mapper, only used for mapping
-          config:
-            introspection.token.claim: "true"
-            multivalued: "true"
-            userinfo.token.claim: "false"
-            lightweight.claim: "true"
-            id.token.claim: "true"
-            access.token.claim: "true"
-            claim.name: groups
-            jsonType.label: String
-        - type: oidc-usermodel-attribute-mapper
-          attribute: usertype
-          config:
-            aggregate.attrs: "true"
-            introspection.token.claim: "true"
-            multivalued: "true"
-            userinfo.token.claim: "true"
-            id.token.claim: "true"
-            lightweight.claim: "false"
-            access.token.claim: "true"
-            claim.name: roles
-            jsonType.label: String
-      fkaMappers:
-        - displayName: 'userType: User'
-          type: saml-advanced-group-idp-mapper
-          config:
-            syncMode: INHERIT
-            attributes: '[{"key":"https://data.gov.dk/model/core/eid/privilegesSimple","value":"http://adgang.os2.eu/roles/usersystemrole/os2ai/user/1"}]'
-            group: users
-        - displayName: 'userType: Admin'
-          type: saml-advanced-group-idp-mapper
-          config:
-            syncMode: INHERIT
-            attributes: '[{"key":"https://data.gov.dk/model/core/eid/privilegesSimple","value":"http://adgang.os2.eu/roles/usersystemrole/os2ai/admin/1"}]'
-            group: admins
-        - displayName: 'user group: Builder'
-          type: saml-advanced-role-idp-mapper
-          config:
-            syncMode: INHERIT
-            attributes: '[{"key":"https://data.gov.dk/model/core/eid/privilegesSimple","value":"http://adgang.os2.eu/roles/usersystemrole/os2ai/builder/1"}]'
-            role: Builder
+      claims:
+        - key: groups
+          mappings:
+            - entityId: http://adgang.os2.eu/roles/usersystemrole/os2ai/builder/1
+              value: Builder
+        - key: roles
+          type: exclusive
+          mappings:
+            - entityId: http://adgang.os2.eu/roles/usersystemrole/os2ai/admin/1
+              value: admin
+            - entityId: http://adgang.os2.eu/roles/usersystemrole/os2ai/user/1
+              value: user
 
   ingress:
     annotations:
