@@ -123,6 +123,13 @@ litellm:
         guardrails:
           - message_trimming
 
+      - model_name: multilingual-e5-large
+        litellm_params:
+          model: nebius/intfloat/multilingual-e5-large
+          api_key: os.environ/SHLLM_API_KEY
+          api_base: https://litellm.shllm.computerome-k8s.dk/v1
+          max_tokens: 8192
+
     guardrails:
       - guardrail_name: "message_trimming"
         litellm_params:
